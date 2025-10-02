@@ -280,7 +280,8 @@ public class Keyboard
         String token = getNextToken();
         float value;
         try {  
-            value = (new Float(token)).floatValue();
+            //value = (new Float(token)).floatValue();
+            value = Float.parseFloat(token);
         } 
         catch (Exception exception) 
         {  
@@ -300,7 +301,8 @@ public class Keyboard
         double value;
 
         try {  
-            value = (new Double(token)).doubleValue();
+            //value = (new Double(token)).doubleValue();
+            value = Double.parseDouble(token);
         } 
         catch (Exception exception) 
         {  
