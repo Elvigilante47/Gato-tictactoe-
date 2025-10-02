@@ -18,7 +18,7 @@
     private int perdidas = 0;
     private int empatados = 0;
     private int puntaje = 0;
-    private char ficha;
+    private char ficha = ' ';
 
     /*
      * Constructor jugador 
@@ -76,6 +76,10 @@
      */
     public void registrarEmpate() {
         empatados = empatados + 1;
+    }
+
+    public void resetearPuntaje() {
+        puntaje = 0;
     }
     
 

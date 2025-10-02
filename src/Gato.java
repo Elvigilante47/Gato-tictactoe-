@@ -11,15 +11,87 @@ public class Gato {
     private char[] tablero = new char[9];
     private char[][] tableroMulticolumna = new char[12][12];
     private Jugador[] jugadores = new Jugador[2];
-    //private Jugador jugador2;
-    private String participantes;
-
+    private StringBuilder historialParticipantes = new StringBuilder();
+    
     public Gato(){
-        this.tablero = tablero;
-        //this.tableroMulticolumna = tableroMulticolumna;
-        this.jugadores = jugadores;
-        //this.jugador2 = jugador2;
-        this.participantes = participantes;
+        vaciarTablero();
+    }
+    
+    /*
+     * Metodo para crear a los jugadores
+     */
+    public void crearJugadores() {
+        System.out.println("Ingrese el nombre de los jugadores");
+        System.out.println("Jugador 1");
+        jugadores[0] = new Jugador(ingresarNombre());
+        jugadores[0].aumentarAdversarios();
+        System.out.println("Jugador 2");
+        jugadores[1] = new Jugador(ingresarNombre());
+        jugadores[1].aumentarAdversarios();
+    }
+
+    /*
+     * Metodo que asigna las fichas a los jugadores
+     */
+    public void asignarFicha() {
+        boolean romperCiclo = false;
+        
+        do {
+            try {
+                System.out.println("El jugador " + nombreJugador(0) + " seleccionara su ficha, el segundo se le asignara automaticamente la sobrante:");
+                System.out.println("Ficha (ingresar en mayuscula): 'X' y 'O' (vocal)");
+            
+                // Se asegura de que se ingrese un solo carácter
+                String entrada = Keyboard.readString().trim();
+                
+                if (entrada.length() !=1) {
+                    throw new IllegalArgumentException("Debe ingresar un solo carácter.");
+
+                }
+
+                char ficha = Character.toUpperCase(entrada.charAt(0));
+
+                // Dependiendo de la ficha, se le asigna el simbolo correspondiente
+                if (ficha == 'X' || ficha == 'O') {
+                    ingresarficha(ficha, 0);
+                    ingresarficha((ficha == 'X') ? 'O' : 'X', 1);
+                    romperCiclo = true;
+                } else {
+                    throw new IllegalArgumentException("Ficha inválida. Solo se permite 'X' u 'O'.");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Error inesperado: " + e.getMessage());
+            }
+            
+            
+        } while (!romperCiclo);
+
+    }
+
+    /*
+     * Imprime en pantalla el historial de partidas
+     */
+    public void mostrarHistorialParticipantes () {
+        System.out.println(historialParticipantes.toString());
+    }
+
+    public void mostrarDatosJugadores () {
+        System.out.println("---------------------------------------------------");
+        System.out.println("Jugadores:");
+        System.out.println();
+        System.out.println(jugadores[0].getDatosString());
+        System.out.println();
+        System.out.println("VS");
+        System.out.println();
+        System.out.println(jugadores[1].getDatosString());
+        System.out.println("---------------------------------------------------");
+    }
+
+    public void agregarHistorial (int partida) {
+        historialParticipantes.append("Partida: ").append(partida).append("\n").append(jugadores[0].getDatosString()).append(jugadores[1].getDatosString()).append("\n\n");
+        
     }
 
     /*
@@ -35,7 +107,8 @@ public class Gato {
         do {
             System.out.print("Ingrese su nombre: ");
             nombre = Keyboard.readString();
-            if (nombre.isEmpty()) {
+            
+            if (nombre == null || nombre.trim().isEmpty()) {
                 System.out.println("Error: El nombre no puede estar vacio.");
             } else {
                 romperCiclo = true;
@@ -64,6 +137,22 @@ public class Gato {
 
     public int mostrarpuntajeJugador (int posicion) {
         return jugadores[posicion].getPuntaje();
+    }
+
+    /*
+     * Reinicia el tablero y el puntaje de los jugadores
+     */
+    public void reiniciarConGanador(int posicion) {
+        // Se limpia el tablero para tenerlo listo para una nueva partida
+        vaciarTablero();
+        jugadores[posicion].resetearPuntaje();
+        jugadores[posicion].aumentarAdversarios();
+        //Se mueve el jugador ganador a la primera posicion
+        jugadores[0] = jugadores[posicion];
+
+        //Se crea un nuevo rival
+        jugadores[1] = new Jugador(ingresarNombre());
+
     }
 
     /*
@@ -116,7 +205,7 @@ public class Gato {
     public boolean calcularVictoria(char p) {
         int[][] victorias = { {0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6} };
         
-        for(int[] v:victorias) {
+        for(int[] v: victorias) {
             if (tablero[v[0]] == p && tablero[v[1]] == p && tablero[v[2]] == p) {
                 return true;    
             }
@@ -181,7 +270,7 @@ public class Gato {
 
         for (int i=0; i<tableroMulticolumna.length; i++) {
             for (int j=0; j<tableroMulticolumna[i].length; j++) {
-                System.out.print(tableroMulticolumna[i][j]);
+                System.out.printf("%-2s",tableroMulticolumna[i][j]);
             }
             System.out.println();
         }
@@ -190,7 +279,8 @@ public class Gato {
      }
 
     /*
-     * 
+     * Segun la casilla que se ingrese, se actualiza una zona
+     * determinada de el tablero multicolumna
      */
     public void actualizarTableroMulticolumna(int casilla, char simbolo) {
     
@@ -236,20 +326,12 @@ public class Gato {
         
         }
         
-        /*
-        dibujarSimbolo(1,1, tablero[0]);
-        dibujarSimbolo(1,5, tablero[1]);
-        dibujarSimbolo(1,9, tablero[2]);
-        dibujarSimbolo(5,1, tablero[3]);
-        dibujarSimbolo(5,5, tablero[4]);
-        dibujarSimbolo(5,9, tablero[5]);
-        dibujarSimbolo(9,1, tablero[6]);
-        dibujarSimbolo(9,5, tablero[7]);
-        dibujarSimbolo(9,9, tablero[8]);
-         */
   
     }
 
+    /*
+     * Dibuja el simbolo ('X' o 'O') en el tablero multicolumna
+     */
     public void dibujarSimbolo(int casilla, int columna, char simbolo) {
 
         if (simbolo == 'X') {
