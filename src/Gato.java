@@ -18,83 +18,6 @@ public class Gato {
     }
     
     /*
-     * Metodo para crear a los jugadores
-     */
-    public void crearJugadores() {
-        System.out.println("Ingrese el nombre de los jugadores");
-        System.out.println("Jugador 1");
-        jugadores[0] = new Jugador(ingresarNombre());
-        jugadores[0].aumentarAdversarios();
-        System.out.println("Jugador 2");
-        jugadores[1] = new Jugador(ingresarNombre());
-        jugadores[1].aumentarAdversarios();
-    }
-
-    /*
-     * Metodo que asigna las fichas a los jugadores
-     */
-    public void asignarFicha() {
-        boolean romperCiclo = false;
-        
-        do {
-            try {
-                System.out.println("El jugador " + nombreJugador(0) + " seleccionara su ficha, el segundo se le asignara automaticamente la sobrante:");
-                System.out.println("Ficha (ingresar en mayuscula): 'X' y 'O' (vocal)");
-            
-                // Se asegura de que se ingrese un solo carácter
-                String entrada = Keyboard.readString().trim();
-                
-                if (entrada.length() !=1) {
-                    throw new IllegalArgumentException("Debe ingresar un solo carácter.");
-
-                }
-
-                char ficha = Character.toUpperCase(entrada.charAt(0));
-
-                // Dependiendo de la ficha, se le asigna el simbolo correspondiente
-                if (ficha == 'X' || ficha == 'O') {
-                    ingresarficha(ficha, 0);
-                    ingresarficha((ficha == 'X') ? 'O' : 'X', 1);
-                    romperCiclo = true;
-                } else {
-                    throw new IllegalArgumentException("Ficha inválida. Solo se permite 'X' u 'O'.");
-                }
-            } catch (IllegalArgumentException e) {
-                System.out.println("Error: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("Error inesperado: " + e.getMessage());
-            }
-            
-            
-        } while (!romperCiclo);
-
-    }
-
-    /*
-     * Imprime en pantalla el historial de partidas
-     */
-    public void mostrarHistorialParticipantes () {
-        System.out.println(historialParticipantes.toString());
-    }
-
-    public void mostrarDatosJugadores () {
-        System.out.println("---------------------------------------------------");
-        System.out.println("Jugadores:");
-        System.out.println();
-        System.out.println(jugadores[0].getDatosString());
-        System.out.println();
-        System.out.println("VS");
-        System.out.println();
-        System.out.println(jugadores[1].getDatosString());
-        System.out.println("---------------------------------------------------");
-    }
-
-    public void agregarHistorial (int partida) {
-        historialParticipantes.append("Partida: ").append(partida).append("\n").append(jugadores[0].getDatosString()).append(jugadores[1].getDatosString()).append("\n\n");
-        
-    }
-
-    /*
      * Pide el nombre del jugador y se asegura que no se introdusca un nombre vacio
      * Regresa un String con el nombre del jugador
      * @params
@@ -117,19 +40,123 @@ public class Gato {
 
         return nombre;
         
-        }
-
-    public void agregarJugador (Jugador jugador, int posicion) {
-        jugadores[posicion] = jugador;
     }
+
+
+    /*
+     * Metodo para crear a los jugadores
+     */
+    public void crearJugadores() {
+        System.out.println("Ingrese el nombre de los jugadores");
+        System.out.println("Jugador 1");
+        jugadores[0] = new Jugador(ingresarNombre());
+        jugadores[0].aumentarAdversarios();
+        System.out.println("Jugador 2");
+        jugadores[1] = new Jugador(ingresarNombre());
+        jugadores[1].aumentarAdversarios();
+    }
+
+    /*
+     * Metodo que asigna las fichas a los jugadores
+     */
+    public void asignarFicha() {
+        boolean romperCiclo = false;
+
+        do{
+            try {
+                System.out.println("--------------------------------------------------------------------");
+                System.out.println("El jugador " + nombreJugador(0) + " seleccionara su ficha, el segundo se le asignara automaticamente la sobrante:");
+                System.out.println("Ficha (ingresar en mayuscula): 'X' y 'O' (vocal)");
+            
+                // Se asegura de que se ingrese un solo carácter
+                char ficha = Character.toUpperCase(Keyboard.readChar());
+
+                // Dependiendo de la ficha, se le asigna el simbolo correspondiente
+                if (ficha == 'X' || ficha == 'O') {
+                    jugadores[0].setFicha(ficha);
+                    jugadores[1].setFicha((ficha == 'X') ? 'O' : 'X');
+                    romperCiclo = true;
+
+                    
+                } else {
+                    throw new IllegalArgumentException("Ficha inválida. Solo se permite 'X' u 'O'.");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Error inesperado: " + e.getMessage());
+            }
+
+        }while (!romperCiclo);
+            
+
+    }
+
+    /*
+     * Metodo para terminar el juego
+     */
+    public boolean terminarJuego (int posicion) {
+        
+        System.out.println("---------------------------------------------------");
+        do{
+            
+            System.out.println("¿jugar otra partida? (s/n)");
+
+                char respuesta =Character.toUpperCase(Keyboard.readChar());
+
+                if (respuesta== 'S') {
+                    //partida++;
+                    reiniciarConGanador(posicion);
+                    return true;
+                } else if (respuesta == 'N') {
+                    System.out.println("Gracias por jugar!");
+                    mostrarHistorialParticipantes();
+                    return false;
+                } else {
+                    System.out.println("Respuesta inválida. Por favor, ingrese 'S' o 'N'.");
+                }
+      
+                
+        }while(true);
+    }
+
+    /*
+     * Imprime en pantalla el historial de partidas
+     */
+    public void mostrarHistorialParticipantes () {
+        System.out.println(historialParticipantes);
+    }
+
+    public void mostrarDatosJugadores () {
+        System.out.println("---------------------------------------------------");
+        System.out.println("Jugadores: \n");
+
+        System.out.println(jugadores[0]);
+        System.out.println("\n VS \n");
+
+        System.out.println(jugadores[1]);
+        System.out.println("---------------------------------------------------");
+    }
+
+    public void agregarHistorial (int partida) {
+        historialParticipantes.append("\n--------------------------------------------------- \n")
+        .append("Enfrentamiento: ").append(partida).append("\n ")
+        .append(jugadores[0]).append("\n")
+        .append(jugadores[1]).append("\n")
+        .append("---------------------------------------------------\n");
+        
+    }
+
 
     public String nombreJugador (int posicion) {
         return jugadores[posicion].getNombre();
     }
 
+    /*
     public void ingresarficha (char ficha, int posicion) {
         jugadores[posicion].setFicha(ficha);
     }
+    */
 
     public char mostrarfichaJugador (int posicion) {
         return jugadores[posicion].getFicha();
@@ -137,6 +164,11 @@ public class Gato {
 
     public int mostrarpuntajeJugador (int posicion) {
         return jugadores[posicion].getPuntaje();
+    }
+
+    public void aumentarPartidas() {
+        jugadores[0].aumentarPartidas();
+        jugadores[1].aumentarPartidas();
     }
 
     /*
@@ -149,9 +181,12 @@ public class Gato {
         jugadores[posicion].aumentarAdversarios();
         //Se mueve el jugador ganador a la primera posicion
         jugadores[0] = jugadores[posicion];
-
+        System.out.println("---------------------------------------------------");
+        System.out.println("Nuevo rival");
         //Se crea un nuevo rival
         jugadores[1] = new Jugador(ingresarNombre());
+        jugadores[1].aumentarAdversarios();
+        asignarFicha();
 
     }
 
@@ -285,45 +320,16 @@ public class Gato {
     public void actualizarTableroMulticolumna(int casilla, char simbolo) {
     
         switch (casilla) {
-            case 1:
-                dibujarSimbolo(1,1, simbolo);
-                break;
-
-            case 2:
-                dibujarSimbolo(1,5, simbolo);
-                break;
-
-            case 3:
-                dibujarSimbolo(1,9, simbolo);
-                break;
-
-            case 4:
-                dibujarSimbolo(5,1, simbolo);
-                break;
-
-            case 5:
-                dibujarSimbolo(5,5, simbolo);
-                break;
-
-            case 6:
-                dibujarSimbolo(5,9, simbolo);
-                break;
-
-            case 7:
-                dibujarSimbolo(9,1, simbolo);
-                break;
-
-            case 8:
-                dibujarSimbolo(9,5, simbolo);
-                break;
-
-            case 9:
-                dibujarSimbolo(9,9, simbolo);
-                break;
-        
-            default:
-                break;
-        
+            case 1: dibujarSimbolo(1,1, simbolo); break;
+            case 2: dibujarSimbolo(1,5, simbolo); break;
+            case 3: dibujarSimbolo(1,9, simbolo); break;
+            case 4: dibujarSimbolo(5,1, simbolo); break;
+            case 5: dibujarSimbolo(5,5, simbolo); break;
+            case 6: dibujarSimbolo(5,9, simbolo); break;
+            case 7: dibujarSimbolo(9,1, simbolo); break;
+            case 8: dibujarSimbolo(9,5, simbolo); break;
+            case 9: dibujarSimbolo(9,9, simbolo); break;
+            default: break;
         }
         
   
@@ -332,30 +338,17 @@ public class Gato {
     /*
      * Dibuja el simbolo ('X' o 'O') en el tablero multicolumna
      */
-    public void dibujarSimbolo(int casilla, int columna, char simbolo) {
+    public void dibujarSimbolo(int filaCentro, int columnaCentro, char simbolo) {
 
-        if (simbolo == 'X') {
-            for (int i=-1; i<=1; i++) {
-                for (int j=-1; j<=1; j++) {
-                    if ((i != 0 && j != 0)|| (i == 0 && j == 0)) {
-                         tableroMulticolumna[casilla+i][columna+j] = 'X';
-                    }
-                   
-                }
+        final char[][] MATRIZ_X = { {'X', ' ', 'X'}, {' ', 'X', ' '}, {'X', ' ', 'X'}};
+        final char[][] MATRIZ_O = { {'O', 'O', 'O'}, {'O', ' ', 'O'}, {'O', 'O', 'O'}};
+
+        char[][] MATRIZ_PLANTILLA = (simbolo == 'X') ? MATRIZ_X : MATRIZ_O;
+
+        for (int i=-1; i<=1; i++) {
+            for (int j=-1; j<=1; j++) {
+                tableroMulticolumna[filaCentro+i][columnaCentro+j] = MATRIZ_PLANTILLA[i+1][j+1];
             }
-            
-        } else if (simbolo == 'O') {
-            for (int i=-1; i<=1; i++) {
-                for (int j=-1; j<=1; j++) {
-                    if ((i == 0 && j == 0)) {
-                         continue;
-                    } else {
-                        tableroMulticolumna[casilla+i][columna+j] = 'O';
-                    }
-                   
-                }
-            }
-            
         }
         
     }

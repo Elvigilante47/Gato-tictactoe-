@@ -21,7 +21,9 @@
     private char ficha = ' ';
 
     /*
-     * Constructor jugador 
+     * Constructor jugador
+     * @params
+     * nombre - Captura el nombre de entrada  
      */
    public Jugador(String nombre) {
     this.nombre = nombre;
@@ -33,10 +35,6 @@
      */
     public String getNombre() {
         return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
      /*
@@ -99,7 +97,8 @@
     /*
      * Regresa un String con todos los datos del jugador
      */
-    public String getDatosString() {
+    @Override
+    public String toString() {
         //String datosJugador = "nombre: " + nombre + "\n adversarios enfrentados:" +  adversarios + "\n total de partidas: " + totalPartidas + "\n Partidas ganadas: " + ganadas + "\n Partidas perdidas: " + perdidas + "\n Partidas empatadas: " + empatados + "\n puntaje total: " + puntaje + "\n ficha: " + ficha;
 
         StringBuilder sb = new StringBuilder();
@@ -115,18 +114,6 @@
         
 
     }
-
-    public void resetearDatos () {
-        nombre = "";
-        adversarios = 0;
-        totalPartidas = 0;
-        ganadas = 0;
-        perdidas = 0;
-        empatados = 0;
-        puntaje = 0;
-        ficha = ' ';        
-    }
-
 
 }
 

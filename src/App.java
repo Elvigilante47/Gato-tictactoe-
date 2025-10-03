@@ -10,13 +10,14 @@
 public class App {
     public static void main(String[] args) throws Exception {
 
-        //Variable utilizada para romper ciclos
-        boolean salirJuego = false;
-        final int PUNTUAJE_VICTORIA = 10;
+        final int PUNTUAJE_VICTORIA = 4; //10
+        int Enfrentamientos = 1;
         int partida = 1;
-        
+        // turno para saber que jugador va; Empieza jugador [0]
+        int turno;
+
         System.out.println("Este es el juego del gato (tic tac toe)");
-        System.out.println("Los jugadores pueden elegir cual es su simbolo (X o O)");
+        System.out.println("Los jugadores -pueden elegir cual es su simbolo (X o O)");
         System.out.println("--------------------------------------------------------------------");
 
         Gato tableroGato = new Gato(); //Instancia de la clase Gato
@@ -39,13 +40,13 @@ public class App {
         System.out.println("------------------------------------------------------------------------------------");
 
         
-
+        
         /*
          * Repetir Ciclo mientras se jueguen nuevas partidas
          */
-        while (!salirJuego) {
-            int turno = 0; // turno para saber que jugador va; Empieza jugador [0]
-            int ronda = 1;
+        
+        do {
+            turno = 0;
             /*
             * Ciclo para jugar el juego
             * Se repetira hasta que un jugador alcanze el puntuaje maximo (PUNTUAJE_VICTORIA)
@@ -62,8 +63,8 @@ public class App {
                     //No avanza el turno si la casilla esta ocupada o no se ingreso un numero del 1 al 9
                     do {
                         System.out.println("--------------------------------------------------------------------");
+                        System.out.println("Enfrentamiento: " + Enfrentamientos);
                         System.out.println("Partida: " + partida);
-                        System.out.println("Ronda: " + ronda);
                         System.out.println("Turno:" + tableroGato.nombreJugador(turno));
                         tableroGato.mostrarTablero();
                         System.out.println("Ingrese el numero de la casilla que desea ocupar: ");
@@ -84,7 +85,6 @@ public class App {
                     }
                     
                   
-
                 }
                 // Mostrar mensaje de empate Solo si no hubo ganador
                 if (!huboGanador) { //!ganador
@@ -95,51 +95,16 @@ public class App {
 
 
                 tableroGato.vaciarTablero();
-                
-                ronda++;
+                tableroGato.aumentarPartidas();
+                partida++;
+               
 
             }
-
             
+            tableroGato.agregarHistorial(Enfrentamientos);
+            Enfrentamientos++;
+        } while (tableroGato.terminarJuego(turno));
 
-            tableroGato.agregarHistorial(partida);
-
-            boolean respuestaValida = false;
-            do {
-                try {
-                    System.out.println("¿jugar otra partida? (s/n)");
-                    
-                    String entrada = Keyboard.readString().trim();
-                        
-                        if (entrada.length() !=1) {
-                            throw new IllegalArgumentException("Debe ingresar un solo carácter.");
-                        }
-
-                        char respuesta = Character.toUpperCase(entrada.charAt(0));
-
-                    
-                    if (respuesta == 'S' || respuesta == 'N') {
-                        if (respuesta== 'S') {
-                            partida++;
-                            tableroGato.reiniciarConGanador(turno);
-                        } else if (respuesta == 'N') {
-                            System.out.println("Gracias por jugar!");
-                            tableroGato.mostrarHistorialParticipantes();
-                            salirJuego = true;
-                        }
-                        respuestaValida = true;
-                    }
-                    
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Error: " + e.getMessage());
-                } catch (Exception e) {
-                    System.out.println("Error inesperado: " + e.getMessage());
-                }
-            
-            } while (!respuestaValida);
-            
-
-        }
     
     }
 }
